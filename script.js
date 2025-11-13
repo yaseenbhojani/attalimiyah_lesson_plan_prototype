@@ -896,23 +896,11 @@ function loadHomeworkSection() {
                 <i class="fas fa-home mr-2"></i>Homework Assignment
             </h2>
             <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Homework Title</label>
-                    <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter homework title">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                    <textarea class="w-full border border-gray-300 rounded-md px-3 py-2 h-20 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describe homework assignment..."></textarea>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Deadline</label>
-                        <input type="date" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Estimated Time (minutes)</label>
-                        <input type="number" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="30">
-                    </div>
+                <div class="homework-list space-y-4"></div>
+                <div class="flex justify-end">
+                  <button type="button" class="add-homework bg-blue-50 text-blue-600 px-4 py-2 rounded hover:bg-blue-100">
+                    Add Homework
+                  </button>
                 </div>
                 <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                     <p class="text-sm text-yellow-800">
@@ -923,6 +911,59 @@ function loadHomeworkSection() {
             </div>
         </div>
     `;
+  setupHomeworkList();
+}
+
+function setupHomeworkList() {
+  const root = document.getElementById("homework-section");
+  if (!root) return;
+  const wrapper = root.querySelector(".bg-white");
+  if (!wrapper || wrapper.dataset.hwInitialized === "true") return;
+
+  const list = root.querySelector(".homework-list");
+  const addBtn = root.querySelector(".add-homework");
+
+  const createRow = () => {
+    const row = document.createElement("div");
+    row.className = "homework-row resource-card";
+    row.innerHTML = `
+      <div class="resource-header">
+        <div class="title"><span class="icon"><i class="fas fa-tasks"></i></span><span>Homework</span></div>
+        <button type="button" class="remove-hw icon-btn"><i class="fas fa-trash"></i><span>Remove</span></button>
+      </div>
+      <div class="resource-body">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Homework Title</label>
+          <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Enter homework title">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+          <textarea class="w-full border border-gray-300 rounded-md px-3 py-2 h-20" placeholder="Describe homework assignment..."></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Deadline</label>
+          <input type="date" class="w-full border border-gray-300 rounded-md px-3 py-2">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Estimated Time (minutes)</label>
+          <input type="number" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="30">
+        </div>
+      </div>
+    `;
+
+    row.querySelector(".remove-hw").addEventListener("click", () => row.remove());
+    return row;
+  };
+
+  if (addBtn && list) {
+    addBtn.addEventListener("click", () => {
+      list.appendChild(createRow());
+    });
+    // start with one row
+    if (list.children.length === 0) list.appendChild(createRow());
+  }
+
+  wrapper.dataset.hwInitialized = "true";
 }
 
 // Reflection section removed per requirements
