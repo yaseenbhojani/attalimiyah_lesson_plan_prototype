@@ -205,6 +205,10 @@
   transition: color 0.2s ease;
 }
 
+.star-rating .fa-star { cursor: pointer; }
+.emoji-rating .emoji { cursor: pointer; }
+.emoji-rating .emoji:hover { filter: brightness(1.1); }
+
 .star-rating .fa-star.active {
   color: #fbbf24 !important;
 }
@@ -760,4 +764,28 @@ textarea:focus {
 .resource-card label { font-size: 12px; color: #374151; }
 .resource-card select, .resource-card input[type="text"] {
   border: 1px solid #d1d5db;
+}
+
+/* Disabled state styling for all form controls */
+input:disabled,
+select:disabled,
+textarea:disabled,
+button:disabled {
+  background-color: #f3f4f6 !important; /* gray-100 */
+  color: #9ca3af !important;           /* gray-400 */
+  border-color: #e5e7eb !important;    /* gray-200 */
+  cursor: not-allowed !important;
+  opacity: 1 !important; /* override browser dim */
+}
+
+/* Disabled state for Choices.js */
+.choices.is-disabled .choices__inner,
+.choices.is-disabled .choices__list--multiple .choices__item {
+  background-color: #f3f4f6 !important;
+  color: #9ca3af !important;
+  border-color: #e5e7eb !important;
+}
+.choices.is-disabled .choices__input {
+  background-color: #f3f4f6 !important;
+  color: #9ca3af !important;
 }

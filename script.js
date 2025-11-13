@@ -98,6 +98,79 @@ const populateTopicTheme = () => {
     return;
   }
 
+// ----- Step navigation and UI updates -----
+function showStep(step) {
+  const steps = Array.from(document.querySelectorAll('.form-step'));
+  steps.forEach((el, idx) => el.classList.toggle('active', idx === step - 1));
+
+  // Update step indicators
+  const indicators = document.querySelectorAll('.step-indicator');
+  indicators.forEach((ind, idx) => {
+    ind.classList.toggle('active', idx === step - 1);
+    ind.classList.toggle('completed', idx < step - 1);
+  });
+
+  // Update current step text
+  const cur = document.getElementById('current-step');
+  if (cur) cur.textContent = String(step);
+
+  // Buttons
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const submitBtn = document.getElementById('submit-btn');
+
+  if (prevBtn) prevBtn.disabled = step === 1;
+  if (nextBtn) nextBtn.classList.toggle('hidden', step === totalSteps);
+  if (submitBtn) submitBtn.classList.toggle('hidden', step !== totalSteps);
+
+  // Progress bar
+  const bar = document.getElementById('progress-bar');
+  if (bar) {
+    const pct = Math.max(0, Math.min(100, (step - 1) * (100 / (totalSteps - 1))));
+    bar.style.width = pct + '%';
+  }
+
+  // Initialize dynamic content when entering steps that need it
+  if (step === 4) {
+    if (document.getElementById('instructional-sequence')?.childElementCount === 0) {
+      loadInstructionalSequence();
+    }
+  } else if (step === 5) {
+    if (document.getElementById('assessment-section')?.childElementCount === 0) {
+      loadAssessmentSection();
+    }
+    if (document.getElementById('homework-section')?.childElementCount === 0) {
+      loadHomeworkSection();
+    }
+  } else if (step === 6) {
+    setupStarRating();
+    setupEmojiRating();
+  }
+}
+
+function nextStep() {
+  if (currentStep < totalSteps) {
+    currentStep += 1;
+    showStep(currentStep);
+  }
+}
+
+function previousStep() {
+  if (currentStep > 1) {
+    currentStep -= 1;
+    showStep(currentStep);
+  }
+}
+
+// Initialize on load
+document.addEventListener('DOMContentLoaded', () => {
+  // Ensure dependent selects and topic/theme wiring
+  populateTopicTheme();
+  setupResourceBlocks();
+  // Eager-load step 4/5 containers if needed later via showStep
+  showStep(currentStep);
+});
+
   // Map subject value to key used in topicThemeData (normalize)
   const normalize = (s) => s.toLowerCase().replace(/\s+/g, "-");
   const keyMap = {
@@ -148,7 +221,7 @@ let lessonPlanData = {};
 let isDirty = false;
 let autoSaveInterval;
 let currentStep = 1;
-const totalSteps = 5;
+const totalSteps = 6;
 
 // Dummy curriculum -> grades -> subjects data
 const curriculumData = {
@@ -951,7 +1024,9 @@ function setupHomeworkList() {
       </div>
     `;
 
-    row.querySelector(".remove-hw").addEventListener("click", () => row.remove());
+    row
+      .querySelector(".remove-hw")
+      .addEventListener("click", () => row.remove());
     return row;
   };
 
@@ -1050,11 +1125,11 @@ function setupStarRating() {
         rating.dataset.rating = starValue;
 
         stars.forEach((s, index) => {
-          if (index < starValue) {
-            s.classList.add("active");
-          } else {
-            s.classList.remove("active");
-          }
+          const isOn = index < starValue;
+          s.classList.toggle("active", isOn);
+          // Toggle filled vs outlined icon
+          s.classList.toggle("fas", isOn);
+          s.classList.toggle("far", !isOn);
         });
       });
     });
