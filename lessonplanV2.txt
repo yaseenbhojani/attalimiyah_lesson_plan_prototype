@@ -1,0 +1,146 @@
+Lesson Plan ERP Guidelines Version 2
+7th November, 2025 
+
+This document represents Version 2 of the Lesson Plan Guidelines for the ERP Module, revised following the meeting with Taher BS on October 25, 2025. It outlines the updated module requirements discussed as a continuation of the previous document.
+1.Lesson Allocation and Timetable
+Each lesson must be linked to the official school timetable and lesson allocation plan. The lesson plan should align with the Lesson Allocation Policy.
+Teachers must prepare and submit their lesson plans to the Head of Section (HoS) for review and approval. 
+1.1.System Reporting (Dashboard View):
+The ERP system should generate automated reports showing:
+Timely submission of lesson plans.
+Timely review and approval of lesson plans by the HoS.
+Count of:
+oLesson plans submitted
+oLesson plans approved
+oLesson plans overdue
+1.2.Lesson Plan Sharing:
+The system should have an option of sharing the Lesson plans. Only panel-approved lesson plans will be available for sharing within the ERP. 
+2.Curriculum  
+The curriculum includes grades, subjects, themes, topics, Student Learning Outcomes (SLOs) and suggested pedagogical techniques. 
+A Master of curriculum will be developed and shared with the ERP team. Linear plans pdf files to be shared with the ERP team. 
+The ERP system should track the status of SLOs—showing which have been achieved and which remain pending. 
+Cognitive domain SLOs will be derived from the curriculum document.
+Affective and psychomotor domain SLOs will be written by teachers and selected from a drop-down menu.
+3.Cross-Curricular Integration
+The ERP system should allow tagging and linking of lessons across subjects for cross-curricular integration.
+4.Resources for Lesson Plan 
+The ERP should include a comprehensive Master Resource List comprising three categories:
+4.1.Textbook Resources:
+oMaster list of current textbooks for each subject and grade, including student books and teacher reference books.
+oA structured table of all curriculum-related books and resources.
+4.2.Library Resources:
+oLibrary books and digital materials relevant to subjects and topics.
+4.3.Supplementary Resources:
+oWorksheets, presentations, videos, and other teaching materials.
+The following outlines the workflow for managing lesson plan resources.
+Step 1: Creation of Master Resource List
+The ERP Admin Department creates and maintains a Master Resource List within the system.
+The list is organized into three main categories: Textbook Resources, Library Resources, and Supplementary Resources.
+Step 2: Categorization of Resources
+1. Textbook Resources
+A detailed table is created listing all current textbooks for each subject and grade level.
+Each entry includes:
+oGrade 
+oSubject 
+oBook title
+oAuthor/publisher details
+oEdition/year
+oType: Student Book or Teacher Reference Book
+oCurriculum alignment (linking each book to specific curriculum like Integrated, Cambridge etc.).
+2. Library Resources
+The system integrates a database of library books and digital materials aligned with subjects and topics.
+Each resource includes:
+oBook title or digital resource name
+oSubject/topic relevance
+oResource format (print, e-book, video, etc.)
+oAccess location (library shelf, ERP digital repository, etc.)
+3. Supplementary Resources
+A repository of worksheets, presentations, videos, and teaching aids is uploaded and tagged by subject, grade, and topic.
+Each item includes:
+oResource type (worksheet, PPT, video, etc.)
+oDescription and learning objective
+oUpload link or file access path
+Step 3: Resource Linking in Lesson Plan
+When teachers create a Lesson Plan, the ERP allows them to select relevant resources directly from the Master Resource List.
+Teachers can:
+oAdd or suggest additional resources (subject to approval by the Academic Department).
+oFilter resources by grade, subject, or topic for easy selection.
+Step 4: Review and Approval
+Academic Coordinators or Heads of Section review and approve added or suggested resources before they appear in the shared library.
+Approved resources are then automatically updated in the Master Resource List.
+Step 5: Continuous Update
+The ERP system periodically prompts updates to the Master Resource List.
+New textbooks, digital resources, or supplementary materials can be added through version-controlled updates.
+5.Pre-Lesson Preparation
+Teachers must complete all pre-lesson tasks and gather required materials and resources.
+The system should allow teachers to generate requisitions for materials and resources via a text box input.
+Instructional Sequence
+This part of the lesson plan mainly focuses teaching and learning in the class which includes three parts:
+1.Anticipation: 
+This section includes: 1) a hook activity and 2) recap prompts. The teacher will describe how the hook activity will be conducted and how the recap of the previous topic will take place. 
+It should include two textboxes where teacher can write description of how he/she will conduct the hook or recap. It should include a feature that allows the uploading and storage of various content types—such as text, links, videos, images, Word documents, PowerPoint presentations, and PDF files. 
+2.Building Knowledge: 
+This section represents the core part of the lesson, where the teacher introduces and develops new concepts through various teaching methods and learning activities. In this section, teacher explains how the topic will be taught, outlining the instructional approach and key steps. This part includes a main activity for teaching the topic. 
+The activity should include the following features: 
+2.1.Name of the Main Activity
+Specify the title of the main activity used to teach the topic — for example, presentation, interactive discussion, question–answer, think pair share, group discussion, showing video or any other method suitable for explaining the topic.
+2.2.Description of the Activity
+Provide a brief description of how the activity will be conducted — such as explaining the key concepts through PPT, showing video and explaining the concept, organizing group work or group to teach the topic.
+2.3.Resources Box 
+List or attach the resources used during the main activity, including PowerPoint presentations, images, PDFs, video links that support the activity and help explain the topic. 
+Activity Workflow- Building Knowledge 
+Step	Process Description	ERP Functionality / Workflow	Linked Components
+2. Main Activity Section Setup	The ERP includes a Main Activity Section under “Building Knowledge” in the lesson plan. This section captures details about how the topic will be taught.	Teachers access this section while creating or editing lesson plans. The section includes three structured fields: Name of Main Activity, Description of Activity, and Resources Box.	Linked to Lesson Plan Master (Grade → Subject → Topic → SLO).
+2.1 Name of the Main Activity	Teachers specify the name or method of the main instructional activity.	Dropdown menu or text field allows teachers to select or enter the activity name (e.g., Presentation, Interactive Discussion, Question–Answer, Think–Pair–Share, Group Discussion, Showing Video, etc.). The ERP stores and categorizes activity types for reporting and analysis.	Enables tracking and consistency in teaching approaches.
+2.2 Description of the Activity	Teachers describe how the activity will be conducted to teach or reinforce the topic.	A text box is provided to outline instructional steps, such as “Explain key concepts using a PowerPoint presentation,” or “Show a video followed by discussion.” Optional tags for activity type (Individual, Group-Based, Interactive, etc.) for analytics.	Ensures clarity and alignment with pedagogical best practices.
+2.3 Resources Box	Teachers attach or list instructional materials used during the activity.	Upload or link relevant files (PPTs, images, PDFs, videos). - Option to select existing resources from the Master Resource List (Textbook, Library, Supplementary). System automatically links resources to the specific lesson and topic.	Promotes resource organization, reusability, and quality assurance.
+
+The following guidelines are part of the previous ERP document for Lesson Plan shared on 27th August, 2025. 
+Resource Pool with Drag-and-Drop:
+oDevelop a Resource Library (e.g., database of activities, videos, assessments).
+oAllow teachers to search, preview, and drag resources into the lesson plan sections.
+The system should include a feature that allows the uploading and storage of various content types—such as text, links, videos, worksheets, images, Word documents, PowerPoint presentations, and PDF files—into the database. Additionally, the system should automatically extract and organize the references for the materials used, and list them under the 'Resources' section. The activity should be recorded in the system and searchable as per grade, subject and topic in the future. 
+A Master Activity to be created and shared with the ERP team.
+The process for creating an activity should be clearly outlined.
+In the future, the system should allow search and retrieval of activities by subject and topic.
+3.Consolidation: 
+This section outlines the strategy used to conclude the topic, recap key concepts, or assess students’ understanding of the lesson. It should include a text box where the teacher describes the method or activity that will be used to effectively wrap up the lesson.
+The Consolidation Section of the lesson plan will consist of three structured boxes under the consolidation section, allowing teachers to plan how each lesson will be concluded:
+3.1.Name of the Activity:
+Specify the title or type of consolidation activity used to conclude the topic — for example, Question–Answer session, Quick Recap, Exit Ticket, Mini Quiz, Group Reflection, or any other method suitable for reinforcing learning.
+3.2.Description of the Activity:
+Provide a brief explanation of how the activity will be conducted — such as asking interactive or random questions to assess understanding, conducting a quick recap of key points, or sharing a short quiz to check student learning.
+3.3.Resources Box:
+List or attach the resources used during the consolidation activity, including PowerPoint slides, images, PDFs, quiz links, or video links that support the activity and help summarize the lesson effectively.
+Workflow of Consolidation 
+Step	Process Description	ERP Functionality / Workflow	Linked Components
+3. Consolidation Section Setup	The ERP includes a dedicated Consolidation Section within each lesson plan to define how the lesson will be concluded.	Teachers access the Consolidation Tab while preparing a lesson plan. 
+The section contains three structured input boxes: Name of Activity, Description of Activity, and Resources.	Linked with Lesson Plan Master (Grade → Subject → Topic → SLO).
+3.1. Name of the Activity	Teachers specify the type or name of the consolidation activity that will conclude the lesson.	A dropdown or text field lists options such as Question–Answer, Quick Recap, Exit Ticket, Mini Quiz, Group Reflection, Think Pair Share etc. 
+Teachers can also enter a custom activity name.	Ensures standardization and tracking of consolidation strategies used across lessons.
+3.2. Description of the Activity	Teachers describe how the consolidation activity will be conducted.	A text box allows teachers to detail the process, e.g., “Interactive Q&A to assess understanding” or “Quick recap of key concepts using visuals.” Option to classify activities (e.g., Interactive, Individual, Group-based).	Provides clarity for academic reviewers and aligns with pedagogical expectations.
+3.3. Resources Box	Teachers list or attach resources used during the consolidation activity.	File upload and link attachment options for PPTs, PDFs, images, videos, or quiz links. Teachers can select existing materials from the Master Resource List (Textbook, worksheet, Library, Supplementary).	Integrates with the central Resource Repository for easy access and consistency.
+Assessment
+This section outlines how the given topic will be assessed. The teacher specifies the assessment method, such as homework, assignments, quizzes, or written exams.
+This part will include the following components:
+Type of Assessment: A dropdown menu to select whether the assessment is Formative or Summative.
+Description of Assessment: The teacher will describe how the assessment will be conducted (e.g., through homework, assignments, quizzes, written exams, etc.).
+Timeline of Assessment: The teacher will specify when the assessment will take place, ensuring it aligns with the school calendar.
+A Master Assessment Bank will be created within the ERP. Teachers may create new assessments, or drag and drop from the existing Master Assessment Bank.
+Homework
+Homework may include assessments, activities, or resource-based tasks. A Homework Master List will be maintained. This part should include 
+The teacher can add homework while submitting the lesson plan; or add it after conducting the lesson plan. However, in both cases it will only be assigned after the lesson has been executed. Homework linked to specific lesson.
+After conducting lesson, teacher gets option to assign homework.
+Homework details: Title, Description, Deadline, References.
+Each homework entry must include an estimated completion time for students and parents.
+Teachers may:
+oCreate homework at the time of lesson plan submission, or
+oAdd it after conducting the lesson.
+Homework will be shared with students only after the lesson has been implemented.
+Post Lesson Reflections: 
+This section captures the teacher’s reflections on the lesson implementation and becomes available after the lesson has been delivered. It includes the following reflection questions:
+What aspects of the lesson went well?
+What would I do differently if I taught this lesson again, considering my understanding of students’ needs?
+How effective was the integration of interdisciplinary activities? (Optional)
+Each question will have a dedicated textbox for the teacher to record their reflections.
+This section will also include the following emojis and star ratings that teachers can use for self-reflection.
