@@ -45,6 +45,18 @@ const topicThemeData = {
   },
 };
 
+// Division options per grade/year
+const divisionData = {
+  grade1: ["A", "B", "C"],
+  grade2: ["A", "B", "C"],
+  grade3: ["A", "B"],
+  grade4: ["A", "B"],
+  grade5: ["A", "B", "C", "D"],
+  year1: ["A", "B"],
+  year2: ["A", "B"],
+  year3: ["A", "B", "C"],
+};
+
 const populateTopicTheme = () => {
   // Query DOM locally so this works outside initDependentSelects scope
   const curriculumSelect = document.getElementById("curriculum-select");
@@ -81,6 +93,7 @@ const populateTopicTheme = () => {
         opt.value = item.id;
         opt.textContent = item.label;
       }
+
       select.appendChild(opt);
     });
   };
@@ -98,78 +111,88 @@ const populateTopicTheme = () => {
     return;
   }
 
-// ----- Step navigation and UI updates -----
-function showStep(step) {
-  const steps = Array.from(document.querySelectorAll('.form-step'));
-  steps.forEach((el, idx) => el.classList.toggle('active', idx === step - 1));
+  // ----- Step navigation and UI updates -----
+  function showStep(step) {
+    const steps = Array.from(document.querySelectorAll(".form-step"));
+    steps.forEach((el, idx) => el.classList.toggle("active", idx === step - 1));
 
-  // Update step indicators
-  const indicators = document.querySelectorAll('.step-indicator');
-  indicators.forEach((ind, idx) => {
-    ind.classList.toggle('active', idx === step - 1);
-    ind.classList.toggle('completed', idx < step - 1);
+    // Update step indicators
+    const indicators = document.querySelectorAll(".step-indicator");
+    indicators.forEach((ind, idx) => {
+      ind.classList.toggle("active", idx === step - 1);
+      ind.classList.toggle("completed", idx < step - 1);
+    });
+
+    // Update current step text
+    const cur = document.getElementById("current-step");
+    if (cur) cur.textContent = String(step);
+
+    // Buttons
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+    const submitBtn = document.getElementById("submit-btn");
+
+    if (prevBtn) prevBtn.disabled = step === 1;
+    if (nextBtn) nextBtn.classList.toggle("hidden", step === totalSteps);
+    if (submitBtn) submitBtn.classList.toggle("hidden", step !== totalSteps);
+
+    // Progress bar
+    const bar = document.getElementById("progress-bar");
+    if (bar) {
+      const pct = Math.max(
+        0,
+        Math.min(100, (step - 1) * (100 / (totalSteps - 1)))
+      );
+      bar.style.width = pct + "%";
+    }
+
+    // Initialize dynamic content when entering steps that need it
+    if (step === 4) {
+      if (
+        document.getElementById("instructional-sequence")?.childElementCount ===
+        0
+      ) {
+        loadInstructionalSequence();
+      }
+    } else if (step === 5) {
+      if (
+        document.getElementById("assessment-section")?.childElementCount === 0
+      ) {
+        loadAssessmentSection();
+      }
+      if (
+        document.getElementById("homework-section")?.childElementCount === 0
+      ) {
+        loadHomeworkSection();
+      }
+    } else if (step === 6) {
+      setupStarRating();
+      setupEmojiRating();
+    }
+  }
+
+  function nextStep() {
+    if (currentStep < totalSteps) {
+      currentStep += 1;
+      showStep(currentStep);
+    }
+  }
+
+  function previousStep() {
+    if (currentStep > 1) {
+      currentStep -= 1;
+      showStep(currentStep);
+    }
+  }
+
+  // Initialize on load
+  document.addEventListener("DOMContentLoaded", () => {
+    // Ensure dependent selects and topic/theme wiring
+    populateTopicTheme();
+    setupResourceBlocks();
+    // Eager-load step 4/5 containers if needed later via showStep
+    showStep(currentStep);
   });
-
-  // Update current step text
-  const cur = document.getElementById('current-step');
-  if (cur) cur.textContent = String(step);
-
-  // Buttons
-  const prevBtn = document.getElementById('prev-btn');
-  const nextBtn = document.getElementById('next-btn');
-  const submitBtn = document.getElementById('submit-btn');
-
-  if (prevBtn) prevBtn.disabled = step === 1;
-  if (nextBtn) nextBtn.classList.toggle('hidden', step === totalSteps);
-  if (submitBtn) submitBtn.classList.toggle('hidden', step !== totalSteps);
-
-  // Progress bar
-  const bar = document.getElementById('progress-bar');
-  if (bar) {
-    const pct = Math.max(0, Math.min(100, (step - 1) * (100 / (totalSteps - 1))));
-    bar.style.width = pct + '%';
-  }
-
-  // Initialize dynamic content when entering steps that need it
-  if (step === 4) {
-    if (document.getElementById('instructional-sequence')?.childElementCount === 0) {
-      loadInstructionalSequence();
-    }
-  } else if (step === 5) {
-    if (document.getElementById('assessment-section')?.childElementCount === 0) {
-      loadAssessmentSection();
-    }
-    if (document.getElementById('homework-section')?.childElementCount === 0) {
-      loadHomeworkSection();
-    }
-  } else if (step === 6) {
-    setupStarRating();
-    setupEmojiRating();
-  }
-}
-
-function nextStep() {
-  if (currentStep < totalSteps) {
-    currentStep += 1;
-    showStep(currentStep);
-  }
-}
-
-function previousStep() {
-  if (currentStep > 1) {
-    currentStep -= 1;
-    showStep(currentStep);
-  }
-}
-
-// Initialize on load
-document.addEventListener('DOMContentLoaded', () => {
-  // Ensure dependent selects and topic/theme wiring
-  populateTopicTheme();
-  setupResourceBlocks();
-  // Eager-load step 4/5 containers if needed later via showStep
-  showStep(currentStep);
-});
 
   // Map subject value to key used in topicThemeData (normalize)
   const normalize = (s) => s.toLowerCase().replace(/\s+/g, "-");
@@ -196,23 +219,23 @@ document.addEventListener('DOMContentLoaded', () => {
     themes: ["General Theme"],
   };
 
-  // Populate only Topic and enable it
-  populateSelect(topicSelect, conf.topics);
-  topicSelect.disabled = false;
-
-  // Populate Theme options but keep disabled until a Topic is chosen
+  // Populate Theme options and enable immediately after Subject
   populateSelect(themeSelect, conf.themes);
-  themeSelect.disabled = true;
+  themeSelect.disabled = false;
 
-  // Guarded listener to enable Theme when Topic is selected
-  if (!topicSelect.dataset.themeToggleBound) {
-    topicSelect.addEventListener("change", () => {
-      const hasTopic = !!topicSelect.value;
-      // Reset theme selection when topic changes
-      themeSelect.value = "";
-      themeSelect.disabled = !hasTopic;
+  // Populate Topic options but keep disabled until a Theme is chosen
+  populateSelect(topicSelect, conf.topics);
+  topicSelect.disabled = true;
+
+  // Listener to enable Topic when Theme is selected
+  if (!themeSelect.dataset.topicToggleBound) {
+    themeSelect.addEventListener("change", () => {
+      const hasTheme = !!themeSelect.value;
+      // Reset topic selection when theme changes
+      topicSelect.value = "";
+      topicSelect.disabled = !hasTheme;
     });
-    topicSelect.dataset.themeToggleBound = "true";
+    themeSelect.dataset.topicToggleBound = "true";
   }
 };
 // Lesson Plan ERP JavaScript Functionality
@@ -301,6 +324,7 @@ const curriculumData = {
 function initDependentSelects() {
   const curriculumSelect = document.getElementById("curriculum-select");
   const gradeSelect = document.getElementById("grade-select");
+  const divisionSelect = document.getElementById("division-select");
   const subjectSelect = document.getElementById("subject-select");
   const topicSelect = document.getElementById("topic-select");
   const themeSelect = document.getElementById("theme-select");
@@ -332,10 +356,12 @@ function initDependentSelects() {
 
   // Initial state
   gradeSelect.disabled = true;
+  if (divisionSelect) divisionSelect.disabled = true;
   subjectSelect.disabled = true;
   if (topicSelect) topicSelect.disabled = true;
   if (themeSelect) themeSelect.disabled = true;
   setPlaceholder(gradeSelect, "Select Grade");
+  if (divisionSelect) setPlaceholder(divisionSelect, "Select Division");
   setPlaceholder(subjectSelect, "Select Subject");
   if (topicSelect) setPlaceholder(topicSelect, "Select Topic");
   if (themeSelect) setPlaceholder(themeSelect, "Select Theme");
@@ -344,6 +370,10 @@ function initDependentSelects() {
   curriculumSelect.addEventListener("change", () => {
     const key = curriculumSelect.value;
     setPlaceholder(gradeSelect, "Select Grade");
+    if (divisionSelect) {
+      setPlaceholder(divisionSelect, "Select Division");
+      divisionSelect.disabled = true;
+    }
     setPlaceholder(subjectSelect, "Select Subject");
     subjectSelect.disabled = true;
     if (topicSelect) {
@@ -366,6 +396,16 @@ function initDependentSelects() {
   gradeSelect.addEventListener("change", () => {
     const curKey = curriculumSelect.value;
     const gradeId = gradeSelect.value;
+    // Reset and populate Division based on grade
+    if (divisionSelect) {
+      setPlaceholder(divisionSelect, "Select Division");
+      divisionSelect.disabled = true;
+      if (gradeId && divisionData[gradeId]) {
+        populateSelect(divisionSelect, divisionData[gradeId]);
+        divisionSelect.disabled = false;
+      }
+    }
+    // Subject should remain disabled until Division selection
     setPlaceholder(subjectSelect, "Select Subject");
     if (topicSelect) {
       setPlaceholder(topicSelect, "Select Topic");
@@ -375,22 +415,45 @@ function initDependentSelects() {
       setPlaceholder(themeSelect, "Select Theme");
       themeSelect.disabled = true;
     }
+    // Do not enable subject here; wait for division change
+    subjectSelect.disabled = true;
+  });
 
-    if (curKey && gradeId && curriculumData[curKey]) {
-      const grade = curriculumData[curKey].grades.find((g) => g.id === gradeId);
-      if (grade) {
-        populateSelect(subjectSelect, grade.subjects);
-        subjectSelect.disabled = false;
-        subjectSelect.addEventListener("change", () => {
-          populateTopicTheme();
-        });
+  // Enable and populate Subject when Division is selected
+  if (divisionSelect) {
+    divisionSelect.addEventListener("change", () => {
+      const curKey = curriculumSelect.value;
+      const gradeId = gradeSelect.value;
+      // Reset dependent selects
+      setPlaceholder(subjectSelect, "Select Subject");
+      if (topicSelect) {
+        setPlaceholder(topicSelect, "Select Topic");
+        topicSelect.disabled = true;
+      }
+      if (themeSelect) {
+        setPlaceholder(themeSelect, "Select Theme");
+        themeSelect.disabled = true;
+      }
+
+      if (curKey && gradeId && curriculumData[curKey]) {
+        const grade = curriculumData[curKey].grades.find(
+          (g) => g.id === gradeId
+        );
+        if (grade) {
+          populateSelect(subjectSelect, grade.subjects);
+          subjectSelect.disabled = false;
+          // Bind subject change to populate Topic/Theme
+          subjectSelect.addEventListener("change", () => {
+            populateTopicTheme();
+          });
+        } else {
+          subjectSelect.disabled = true;
+        }
       } else {
         subjectSelect.disabled = true;
       }
-    } else {
-      subjectSelect.disabled = true;
-    }
-  });
+    });
+  }
 
   // Pre-populate if values already set (e.g., restored from storage)
   if (curriculumSelect.value) {
@@ -409,7 +472,10 @@ document.addEventListener("DOMContentLoaded", function () {
   loadAssessmentSection();
   loadHomeworkSection();
   setupEventListeners();
+  setupPreprepGrid();
   startAutoSave();
+  // Initial tab completion update
+  updateTabCompletion();
 });
 
 function initializeApp() {
@@ -568,11 +634,13 @@ function setupEventListeners() {
   form.addEventListener("change", function () {
     isDirty = true;
     updateProgress();
+    updateTabCompletion();
   });
 
   form.addEventListener("input", function () {
     isDirty = true;
     updateProgress();
+    updateTabCompletion();
   });
 
   document.querySelectorAll(".tag-btn").forEach((btn) => {
@@ -650,7 +718,6 @@ function setupResourceBlocks() {
           excel: ".xls,.xlsx",
           ppt: ".ppt,.pptx",
           image: ".jpg,.jpeg,.png,.gif",
-          video: ".mp4,.mov,.avi",
           link: "",
           text: "",
         };
@@ -658,7 +725,7 @@ function setupResourceBlocks() {
           fileInput.setAttribute(
             "accept",
             map[t] ||
-              ".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.mp4,.mov,.avi"
+              ".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"
           );
         if (linkInput)
           linkInput.placeholder =
@@ -754,7 +821,6 @@ function setupResourceBlocks() {
                 <option value="handout">Handout</option>
                 <option value="slides">Slides</option>
                 <option value="audio">Audio</option>
-                <option value="video">Video</option>
                 <option value="link">Link</option>
                 <option value="other">Other</option>
               </select>
@@ -767,7 +833,6 @@ function setupResourceBlocks() {
                 <option value="excel">Excel</option>
                 <option value="ppt">PowerPoint</option>
                 <option value="image">Image</option>
-                <option value="video">Video</option>
                 <option value="link">Link</option>
                 <option value="text">Text</option>
               </select>
@@ -778,7 +843,7 @@ function setupResourceBlocks() {
               <div class="file-upload-area border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-blue-400 transition-colors">
                 <i class="fas fa-cloud-upload-alt text-gray-400 mb-1"></i>
                 <p class="text-sm text-gray-500">Drag files here or click to browse</p>
-                <input type="file" class="supp-file hidden" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.mp4,.mov,.avi">
+                <input type="file" class="supp-file hidden" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
               </div>
             </div>
             <div class="supp-text-wrap hidden">
@@ -840,6 +905,60 @@ function setupResourceBlocks() {
   setupDragAndDrop();
 }
 
+// Pre-lesson Preparation grid (Item/Quantity with add/remove)
+function setupPreprepGrid() {
+  const container = document.getElementById("preprep-grid");
+  if (!container || container.dataset.initialized === "true") return;
+
+  const rowsWrap = document.getElementById("preprep-rows");
+  const addBtn = document.getElementById("preprep-add");
+  if (!rowsWrap || !addBtn) return;
+
+  const createRow = (item = "", qty = "") => {
+    const row = document.createElement("div");
+    row.className = "grid grid-cols-12 gap-2";
+    row.innerHTML = `
+      <div class="col-span-7">
+        <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none" placeholder="Item" value="${String(
+          item
+        ).replace(/"/g, "&quot;")}">
+      </div>
+      <div class="col-span-3">
+        <input type="number" min="0" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none" placeholder="Qty" value="${qty}">
+      </div>
+      <div class="col-span-2 flex justify-end gap-2">
+        <button type="button" class="px-3 py-2 rounded bg-blue-50 text-blue-600 hover:bg-blue-100 preprep-dup" title="Duplicate"><i class="fas fa-clone"></i></button>
+        <button type="button" class="px-3 py-2 rounded bg-red-50 text-red-600 hover:bg-red-100 preprep-del" title="Delete"><i class="fas fa-trash"></i></button>
+      </div>`;
+
+    // Delete
+    const delBtn = row.querySelector(".preprep-del");
+    if (delBtn) delBtn.addEventListener("click", () => row.remove());
+
+    // Duplicate
+    const dupBtn = row.querySelector(".preprep-dup");
+    if (dupBtn)
+      dupBtn.addEventListener("click", () => {
+        const inputs = row.querySelectorAll("input");
+        const [i, q] = [inputs[0]?.value || "", inputs[1]?.value || ""];
+        rowsWrap.appendChild(createRow(i, q));
+      });
+
+    return row;
+  };
+
+  addBtn.addEventListener("click", () => {
+    rowsWrap.appendChild(createRow());
+  });
+
+  // Ensure at least one row by default
+  if (rowsWrap.children.length === 0) {
+    rowsWrap.appendChild(createRow());
+  }
+
+  container.dataset.initialized = "true";
+}
+
 function loadInstructionalSequence() {
   const container = document.getElementById("instructional-sequence");
   container.innerHTML = `
@@ -870,15 +989,26 @@ function loadInstructionalSequence() {
             </div>
 
             <div class="mb-8 border-l-4 border-green-500 pl-4">
-                <h3 class="text-lg font-medium text-gray-800 mb-4">2. Building Knowledge</h3>
+                <div class="section-topbar mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-3 rounded-md">
+                  <h3 class="text-lg font-semibold text-gray-800">2. Building Knowledge</h3>
+                  <div class="w-full md:w-1/2">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Use a Template (optional)</label>
+                    <select id="building-template" class="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                      <option value="">Select a template</option>
+                      <option value="think-pair-share">Think-Pair-Share</option>
+                      <option value="guided-practice">Guided Practice</option>
+                      <option value="inquiry-lab">Inquiry Lab</option>
+                    </select>
+                  </div>
+                </div>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Name of Main Activity</label>
-                        <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter activity name">
+                        <input id="building-name" type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter activity name">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Description of Activity</label>
-                        <textarea class="w-full border border-gray-300 rounded-md px-3 py-2 h-24 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Explain how the activity will be conducted..."></textarea>
+                        <textarea id="building-desc" class="w-full border border-gray-300 rounded-md px-3 py-2 h-24 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Explain how the activity will be conducted..."></textarea>
                     </div>
                     
                     <div class="resource-block" data-section="building">
@@ -892,15 +1022,26 @@ function loadInstructionalSequence() {
             </div>
 
             <div class="mb-8 border-l-4 border-purple-500 pl-4">
-                <h3 class="text-lg font-medium text-gray-800 mb-4">3. Consolidation</h3>
+                <div class="section-topbar mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-3 rounded-md">
+                  <h3 class="text-lg font-semibold text-gray-800">3. Consolidation</h3>
+                  <div class="w-full md:w-1/2">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Use a Template (optional)</label>
+                    <select id="consolidation-template" class="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                      <option value="">Select a template</option>
+                      <option value="exit-ticket">Exit Ticket</option>
+                      <option value="gallery-walk">Gallery Walk</option>
+                      <option value="reflection-journal">Reflection Journal</option>
+                    </select>
+                  </div>
+                </div>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Name of Consolidation Activity</label>
-                        <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter consolidation activity name">
+                        <input id="consolidation-name" type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter consolidation activity name">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Description of Activity</label>
-                        <textarea class="w-full border border-gray-300 rounded-md px-3 py-2 h-20 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describe consolidation activity..."></textarea>
+                        <textarea id="consolidation-desc" class="w-full border border-gray-300 rounded-md px-3 py-2 h-20 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Describe consolidation activity..."></textarea>
                     </div>
                     
                     <div class="resource-block" data-section="consolidation">
@@ -915,6 +1056,68 @@ function loadInstructionalSequence() {
         </div>
     `;
   setupResourceBlocks();
+  setupActivityTemplates();
+}
+
+// Pre-built templates for Building Knowledge and Consolidation
+function setupActivityTemplates() {
+  const templates = {
+    building: {
+      "think-pair-share": {
+        name: "Think-Pair-Share",
+        desc: "Students think individually about a prompt, discuss with a partner, then share with the class.",
+      },
+      "guided-practice": {
+        name: "Guided Practice",
+        desc: "Teacher models the task and guides students through steps before independent practice.",
+      },
+      "inquiry-lab": {
+        name: "Inquiry Lab",
+        desc: "Hands-on investigation where students form questions, test, and record observations.",
+      },
+    },
+    consolidation: {
+      "exit-ticket": {
+        name: "Exit Ticket",
+        desc: "Short prompt at end of lesson to assess understanding and gather feedback.",
+      },
+      "gallery-walk": {
+        name: "Gallery Walk",
+        desc: "Students display work and rotate to review and discuss peers’ outputs.",
+      },
+      "reflection-journal": {
+        name: "Reflection Journal",
+        desc: "Students write a brief reflection on what they learned and questions they still have.",
+      },
+    },
+  };
+
+  const bind = (selId, nameId, descId, group) => {
+    const sel = document.getElementById(selId);
+    const name = document.getElementById(nameId);
+    const desc = document.getElementById(descId);
+    if (!sel || !name || !desc) return;
+    if (sel.dataset.tplBound === "true") return;
+    sel.addEventListener("change", () => {
+      const key = sel.value;
+      const tpl = templates[group][key];
+      if (tpl) {
+        name.value = tpl.name;
+        desc.value = tpl.desc;
+        name.dispatchEvent(new Event("input", { bubbles: true }));
+        desc.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    });
+    sel.dataset.tplBound = "true";
+  };
+
+  bind("building-template", "building-name", "building-desc", "building");
+  bind(
+    "consolidation-template",
+    "consolidation-name",
+    "consolidation-desc",
+    "consolidation"
+  );
 }
 
 function loadAssessmentSection() {
@@ -1225,6 +1428,62 @@ function updateProgress() {
   updateProgressBar(progress);
 }
 
+// Compute per-tab (step) completion percentage and show on each tab label
+function updateTabCompletion() {
+  const indicators = document.querySelectorAll(".step-indicator");
+  indicators.forEach((indicator, idx) => {
+    const stepIndex = idx + 1; // steps are 1-indexed
+    const stepEl = document.getElementById(`step-${stepIndex}`);
+    if (!stepEl) return;
+    const inputs = stepEl.querySelectorAll("input, select, textarea");
+    if (inputs.length === 0) return;
+    let filled = 0;
+    let considered = 0;
+    inputs.forEach((el) => {
+      const type = (el.type || "").toLowerCase();
+      // Skip non-relevant controls
+      if (
+        type === "button" ||
+        type === "hidden" ||
+        type === "radio" ||
+        type === "checkbox"
+      )
+        return;
+      // Skip disabled
+      if (el.disabled) return;
+      // Skip not-visible (hidden via CSS or utility classes)
+      const isHiddenByClass = !!el.closest(".hidden");
+      const isDisplayNone =
+        el.offsetParent === null && getComputedStyle(el).display === "none";
+      if (isHiddenByClass || isDisplayNone) return;
+
+      considered += 1;
+
+      // Determine filled state
+      if (el.tagName === "SELECT" && el.multiple) {
+        if (el.selectedOptions && el.selectedOptions.length > 0) filled += 1;
+      } else {
+        const val = (el.value || "").trim();
+        if (val) filled += 1;
+      }
+    });
+    const pct = considered > 0 ? Math.round((filled / considered) * 100) : 0;
+    let badge = indicator.querySelector(".step-pct");
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.className = "step-pct text-xs text-gray-500 mt-1";
+      // Insert after the label if present, else append
+      const label = indicator.querySelector(".step-label");
+      if (label && label.parentNode === indicator) {
+        indicator.appendChild(badge);
+      } else {
+        indicator.appendChild(badge);
+      }
+    }
+    badge.textContent = `${pct}%`;
+  });
+}
+
 function updateProgressBar(progress) {
   let progressBar = document.querySelector(".progress-bar");
   if (!progressBar) {
@@ -1294,6 +1553,7 @@ function nextStep() {
     updateStepIndicator();
     updateNavigationButtons();
     updateProgressBar();
+    updateTabCompletion();
   }
 }
 
@@ -1305,6 +1565,7 @@ function previousStep() {
     updateStepIndicator();
     updateNavigationButtons();
     updateProgressBar();
+    updateTabCompletion();
   }
 }
 
@@ -1316,6 +1577,7 @@ function goToStep(step) {
     updateStepIndicator();
     updateNavigationButtons();
     updateProgressBar();
+    updateTabCompletion();
   }
 }
 
