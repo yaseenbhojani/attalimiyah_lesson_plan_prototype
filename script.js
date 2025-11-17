@@ -1153,11 +1153,6 @@ function loadAssessmentSection() {
                       <button type="button" class="add-resource bg-blue-50 text-blue-600 px-4 py-2 rounded hover:bg-blue-100">Add Resource</button>
                     </div>
                 </div>
-                <div class="flex space-x-4">
-                    <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" onclick="openAssessmentBank()">
-                        <i class="fas fa-plus mr-2"></i>Add from Assessment Bank
-                    </button>
-                </div>
             </div>
         </div>
     `;
